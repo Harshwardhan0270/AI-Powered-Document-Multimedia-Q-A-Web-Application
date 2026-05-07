@@ -26,19 +26,15 @@ services:
           type: redis
           property: connectionString
       - key: UPLOAD_DIR
-        value: /app/uploads
+        value: /tmp/uploads
       - key: FAISS_INDEX_DIR
-        value: /app/faiss_indexes
+        value: /tmp/faiss_indexes
       - key: MAX_FILE_SIZE_MB
         value: "50"
       - key: DEBUG
         value: "false"
       - key: ALLOWED_ORIGINS
         value: '["https://documind-frontend.onrender.com","http://localhost:8080"]'
-    disk:
-      name: uploads
-      mountPath: /app/uploads
-      sizeGB: 1
 
   # ── Frontend ─────────────────────────────────────────────────────────────
   - type: web
@@ -59,4 +55,3 @@ databases:
   - name: documind-db
     plan: free
     databaseName: qaapp
-    user: postgres
