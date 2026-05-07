@@ -43,6 +43,10 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     plan: free
+    dockerCommand: nginx -g "daemon off;"
+    envVars:
+      - key: VITE_API_URL
+        value: https://documind-backend.onrender.com
 
   # ── Redis ─────────────────────────────────────────────────────────────────
   - type: redis
