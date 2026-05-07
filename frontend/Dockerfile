@@ -5,7 +5,9 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-ARG VITE_API_URL
+# VITE_API_URL must be set as env var before build
+# Render passes envVars as runtime env, so we read it here
+ARG VITE_API_URL=https://documind-backend.onrender.com
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
@@ -14,5 +16,4 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-# Use ENTRYPOINT so Render can't override it with WEB_CONCURRENCY wrapper
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
