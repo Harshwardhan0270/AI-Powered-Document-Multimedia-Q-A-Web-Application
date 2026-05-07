@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir --timeout=300 --retries=5 -r requirements.txt
 
 COPY app/ ./app/
 
-# Use /tmp for uploads on free tier (no persistent disk)
 RUN mkdir -p /tmp/uploads /tmp/faiss_indexes
 
 RUN useradd -m -u 1000 appuser && \
@@ -20,4 +19,5 @@ USER appuser
 
 EXPOSE 8000
 
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Use shell form so $PORT env var is expanded at runtime
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
