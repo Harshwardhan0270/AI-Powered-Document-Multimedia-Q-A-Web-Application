@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from functools import lru_cache
 from typing import Optional
 
@@ -11,8 +12,18 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
-    # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@db:5432/qaapp"
+    # Database — auto-fix Render's postgresql:// URL to use psycopg v3 async driver
+    DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@db:5432/qaapp"
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        """Convert postgresql:// or postgres:// to postgresql+psycopg:// for async psycopg v3."""
+        if v.startswith("postgres://"):
+            v = v.replace("postgres://", "postgresql+psycopg://", 1)
+        elif v.startswith("postgresql://"):
+            v = v.replace("postgresql://", "postgresql+psycopg://", 1)
+        return v
 
     # Redis
     REDIS_URL: str = "redis://redis:6379/0"
